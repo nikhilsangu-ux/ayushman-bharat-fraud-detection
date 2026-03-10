@@ -1,11 +1,12 @@
 import pandas as pd
-import sqlite3
+import os
 
-def load_claims(csv_path):
-    df = pd.read_csv(csv_path)
+def load_claims(file_path="data/raw/claims.csv"):
+    """
+    Load insurance claims CSV file.
+    """
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"Claims file not found at {file_path}")
+    
+    df = pd.read_csv(file_path)
     return df
-
-def save_to_db(df, db_path="database/claims.db"):
-    conn = sqlite3.connect(db_path)
-    df.to_sql("claims", conn, if_exists="replace", index=False)
-    conn.close()

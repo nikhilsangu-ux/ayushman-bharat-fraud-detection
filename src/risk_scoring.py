@@ -1,16 +1,8 @@
 def calculate_risk(df):
-
-    df["risk_score"] = (
-        df["high_amount_flag"].astype(int) * 30 +
-        df["ghost_flag"].astype(int) * 30 +
-        df["high_frequency_flag"].astype(int) * 20 +
-        df["is_anomaly"].astype(int) * 20
-    )
-
-    df["risk_level"] = df["risk_score"].apply(
-        lambda x: "High" if x >= 60 else
-                  "Medium" if x >= 30 else
-                  "Low"
-    )
-
+    """
+    Combine model prediction and rules to calculate risk score.
+    """
+    df = df.copy()
+    df['risk_score'] = df['fraud_flag']*0.7 + df['rule_flag']*0.3
+    df['risk_category'] = df['risk_score'].apply(lambda x: "High" if x > 0.5 else "Low")
     return df

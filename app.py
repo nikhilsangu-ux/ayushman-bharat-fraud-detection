@@ -1,38 +1,29 @@
 import streamlit as st
-import os
-print(os.listdir())
+from pages import dashboard, upload, analysis, reports
 
-from src.ingestion import load_claims
-from src.feature_engineering import create_features
-from src.anomaly_model import train_model, load_model, predict
-from src.risk_scoring import calculate_risk
-from src.report_generator import generate_report
+st.set_page_config(
+    page_title="Fraud Detection Agent",
+    layout="wide"
+)
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-logo_path = os.path.join(BASE_DIR, "assets", "pmjay_logo.jpeg")
+with open("assets/styles.css") as f:
+    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-st.image(logo_path, width=250)
-st.title("🏥 Ayushman Bharat Fraud Detection Agent")
+st.sidebar.title("🏥 Ayushman Bharat Fraud Detection Agent")
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-file_path = os.path.join(BASE_DIR, "data", "raw", "claims.csv")
+menu = st.sidebar.radio(
+    "Navigation",
+    ["Dashboard", "Upload Data", "Fraud Analysis", "Reports"]
+)
 
-df = load_claims(file_path)
+if menu == "Dashboard":
+    dashboard.show()
 
-df = create_features(df)
+elif menu == "Upload Data":
+    upload.show()
 
-model = train_model(df)
-df = predict(model, df)
+elif menu == "Fraud Analysis":
+    analysis.show()
 
-df = calculate_risk(df)
-
-st.subheader("📊 Fraud Detection Dashboard")
-st.dataframe(df.head())
-
-st.subheader("🚨 High Risk Claims")
-st.dataframe(df[df["risk_level"] == "High"])
-
-report = generate_report(df)
-
-st.subheader("📄 Risk Report")
-st.text(report)
+elif menu == "Reports":
+    reports.show()
